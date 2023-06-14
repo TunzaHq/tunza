@@ -1,0 +1,35 @@
+name: tunza
+description: A new Flutter project.
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  camera: ^0.10.5+2
+  cupertino_icons: ^1.0.2
+  flutter:
+    sdk: flutter
+  flutter_svg: ^2.0.6
+  google_fonts: ^4.0.4
+  intl: ^0.17.0
+  permission_handler: ^10.2.0
+  image_picker: ^0.8.7+5
+  
+dependency_overrides:
+  file: ^7.0.0
+
+dev_dependencies:
+  flutter_lints: ^1.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/svg/
+
