@@ -1,82 +1,229 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:tunza/ui/home/drawer_page.dart';
+import 'package:tunza/data/requests.dart';
+import 'package:tunza/ui/auth/passport_photo.dart';
 import 'package:tunza/ui/plans/covers.dart';
 import 'package:tunza/ui/plans/view_plans.dart';
 import 'package:tunza/ui/widgets/services.dart';
 import 'package:tunza/ui/widgets/widgets.dart';
+import 'package:tunza/util/globals.dart';
 import 'package:tunza/util/file_path.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final bool? hideAlert;
+  const HomePage({Key? key, this.hideAlert = true}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with Glob {
+  final requests = Requests();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          padding: const EdgeInsets.only(left: 18, right: 18, top: 34),
-          child: ListView(
-            children: <Widget>[
-              contentHeader(context, widget),
-              const SizedBox(
-                height: 30,
-              ),
-              Text(
-                'Account Overview',
-                style: Theme.of(context).textTheme.headline4,
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              _contentOverView(),
-              const SizedBox(
-                height: 30,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Stack(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height,
+              padding: const EdgeInsets.only(left: 18, right: 18, top: 34),
+              child: ListView(
                 children: <Widget>[
+                  contentHeader(context, widget),
+                  const SizedBox(
+                    height: 30,
+                  ),
                   Text(
-                    'Active Plans',
+                    'Account Overview',
                     style: Theme.of(context).textTheme.headline4,
                   ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  _contentOverView(),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        'Active Plans',
+                        style: Theme.of(context).textTheme.headline4,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _contentSubscriptions(),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        'Services',
+                        style: Theme.of(context).textTheme.headline4,
+                      ),
+                      Visibility(
+                        visible: false,
+                        child: SvgPicture.asset(
+                          filter,
+                          color: Theme.of(context).iconTheme.color,
+                          width: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  FutureBuilder<List<Map<String, dynamic>>?>(
+                      future: requests.getAllCovers(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                          return contentServices(context, snapshot.data ?? []);
+                        }
+                        if (snapshot.data?.isEmpty ?? false) {
+                          return const Center(
+                              child: Text("No covers available"));
+                        }
+                        return const Center(child: CircularProgressIndicator());
+                      }),
                 ],
               ),
-              const SizedBox(height: 16),
-              _contentSubscriptions(),
-              const SizedBox(
-                height: 30,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'Services',
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
-                  Visibility(
-                    visible: false,
-                    child: SvgPicture.asset(
-                      filter,
-                      color: Theme.of(context).iconTheme.color,
-                      width: 18,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              contentServices(context, 6),
-            ],
-          ),
+            ),
+            widget.hideAlert!
+                ? FutureBuilder<Map<String, dynamic>?>(
+                    future: requests.getUser(),
+                    builder: (context, snapshot) {
+                      return (snapshot.hasData &&
+                              snapshot.data!['avatar'].toString().isEmpty)
+                          ? BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                              child: Align(
+                                  alignment: Alignment.center,
+                                  child: Card(
+                                    color: Theme.of(context).backgroundColor,
+                                    child: Container(
+                                        margin:
+                                            const EdgeInsets.only(bottom: 20),
+                                        height: 220,
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                40,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Stack(
+                                          clipBehavior: Clip.none,
+                                          children: [
+                                            Positioned(
+                                                top: -24,
+                                                left: MediaQuery.of(context)
+                                                            .size
+                                                            .width /
+                                                        2 -
+                                                    40,
+                                                child: SizedBox(
+                                                  height: 48,
+                                                  width: 48,
+                                                  child: SvgPicture.asset(logo),
+                                                )),
+                                            Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 24),
+                                                height: 300,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    40,
+                                                child: Column(
+                                                  children: [
+                                                    Align(
+                                                        alignment:
+                                                            Alignment.topCenter,
+                                                        child: Text(
+                                                          'Hello, ${snapshot.data?['full_name']}',
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .headline4!
+                                                              .copyWith(
+                                                                  fontSize: 18,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700),
+                                                        )),
+                                                    const SizedBox(
+                                                      height: 12,
+                                                    ),
+                                                    Align(
+                                                        alignment:
+                                                            Alignment.topCenter,
+                                                        child: Text(
+                                                          'Upload your Passport Photo and ID/Passport Documents to complete your profile',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .headline4!
+                                                              .copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  fontSize: 15),
+                                                        )),
+                                                    const SizedBox(
+                                                      height: 12,
+                                                    ),
+                                                    MaterialButton(
+                                                      elevation: 0,
+                                                      color: const Color(
+                                                          0xFFFFAC30),
+                                                      height: 40,
+                                                      minWidth: 200,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12)),
+                                                      onPressed: () async {
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        const PassportPhoto()));
+                                                      },
+                                                      child: Text(
+                                                        'Upload Documents',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .button
+                                                            ?.copyWith(
+                                                                fontSize: 12),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )),
+                                          ],
+                                        )),
+                                  )),
+                            )
+                          : const SizedBox();
+                    },
+                  )
+                : const SizedBox(),
+          ],
         ),
       ),
     );
@@ -164,8 +311,8 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           GestureDetector(
-            onTap: () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const ViewPlans(id: 12))),
+            // onTap: () => Navigator.push(context,
+            //     MaterialPageRoute(builder: (_) => const ViewPlans(id: 12))),
             child: Container(
               margin: const EdgeInsets.only(right: 10),
               padding: const EdgeInsets.all(16),

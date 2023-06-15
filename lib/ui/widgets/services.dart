@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tunza/ui/plans/view_plans.dart';
-import 'package:tunza/util/file_path.dart';
 
-Widget contentServices(BuildContext context, int take) {
-  List<ModelServices> listServices = [];
-
-  listServices.add(ModelServices(title: "Akiba", img: send));
-  listServices.add(ModelServices(title: "Sacco Solution", img: recive));
-  listServices.add(ModelServices(title: "Cyber Insurance", img: mobile));
-  listServices.add(ModelServices(title: "Fire & Burglary", img: electricity));
-  listServices.add(ModelServices(title: "Britam Biashara", img: cashback));
-  listServices.add(ModelServices(title: "Family Insurance", img: movie));
-  listServices.add(ModelServices(title: "Travel Insurance", img: flight));
-  //listServices.add(ModelServices(title: "More\nOptions", img: menu));
+Widget contentServices(BuildContext context, List<Map<String, dynamic>> data) {
+  print("Data hereree $data");
+  List<ModelServices> listServices = data
+      .map((value) => ModelServices(
+            title: value['name'],
+            img: value['icon'],
+            id: value['id'],
+            subId: value['subId'],
+          ))
+      .toList();
 
   return SizedBox(
     width: double.infinity,
@@ -28,8 +26,10 @@ Widget contentServices(BuildContext context, int take) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const ViewPlans(
-                      id: 1,
+                    builder: (context) => ViewPlans(
+                      id: value.id!,
+                      subId: value.subId ?? -1,
+                      simillar: data,
                     ),
                   ),
                 );
@@ -71,7 +71,7 @@ Widget contentServices(BuildContext context, int take) {
             );
           })
           .toList()
-          .take(take)
+          .take(6)
           .toList(),
     ),
   );
@@ -79,5 +79,7 @@ Widget contentServices(BuildContext context, int take) {
 
 class ModelServices {
   String title, img;
-  ModelServices({required this.title, required this.img});
+  int? id, subId;
+  ModelServices(
+      {required this.title, required this.img, required this.id, this.subId});
 }

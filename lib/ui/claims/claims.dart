@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tunza/data/requests.dart';
 import 'package:tunza/ui/widgets/widgets.dart';
 
 class Claims extends StatefulWidget {
@@ -10,6 +11,74 @@ class Claims extends StatefulWidget {
 
 class _ClaimsState extends State<Claims> {
   final TextEditingController _searchController = TextEditingController();
+
+  final request = Requests();
+
+  var claims = [];
+
+  Future<void> getClaims() async {
+    var response = await request.getClaims();
+    for (var claim in response ?? []) {
+      claims.add(
+        Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          child: Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            color: Theme.of(context).cardColor,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color(0xFFE5E5E5),
+                    ),
+                    child: const Icon(
+                      Icons.shopping_cart_outlined,
+                      color: Color(0xFFFFAC30),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'Biashara Claim',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        'Claimed on 12/12/2020',
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                  Text(
+                    'Ksh 14, 000',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -78,60 +147,7 @@ class _ClaimsState extends State<Claims> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  color: Theme.of(context).cardColor,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Color(0xFFE5E5E5),
-                          ),
-                          child: const Icon(
-                            Icons.shopping_cart_outlined,
-                            color: Color(0xFFFFAC30),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 16,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'Biashara Claim',
-                              style: Theme.of(context).textTheme.bodyText2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(
-                              height: 4,
-                            ),
-                            Text(
-                              'Claimed on 12/12/2020',
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
-                          ],
-                        ),
-                        Spacer(),
-                        Text(
-                          'Ksh 14, 000',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
+                ...claims.take(3).toList(),
                 Card(
                   elevation: 0,
                   shape: RoundedRectangleBorder(

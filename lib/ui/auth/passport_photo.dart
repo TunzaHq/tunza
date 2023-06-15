@@ -1,11 +1,19 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:cloudinary/cloudinary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tunza/data/requests.dart';
 import 'package:tunza/ui/auth/identification.dart';
+import 'package:tunza/ui/home/home_page.dart';
+import 'package:tunza/ui/widgets/widgets.dart';
+import 'package:tunza/util/globals.dart';
 import 'package:tunza/util/file_path.dart';
+import 'package:http/http.dart' as http;
 
 class PassportPhoto extends StatefulWidget {
   const PassportPhoto({super.key});
@@ -15,7 +23,7 @@ class PassportPhoto extends StatefulWidget {
 }
 
 class _PassportPhotoState extends State<PassportPhoto>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, Glob {
   late CameraController _controller;
 
   @override
@@ -60,11 +68,15 @@ class _PassportPhotoState extends State<PassportPhoto>
 
   XFile? file;
 
+  bool uploading = false;
+
+  final requests = Requests();
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-        color: Theme.of(context).backgroundColor,
-        child: SizedBox(
+    return Scaffold(
+        backgroundColor: Theme.of(context).backgroundColor,
+        body: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
             RotatedBox(
@@ -82,7 +94,17 @@ class _PassportPhotoState extends State<PassportPhoto>
               ),
             ),
             const SizedBox(
-              height: 40,
+              height: 10,
+            ),
+            Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.arrow_back))),
+            const SizedBox(
+              height: 10,
             ),
             SizedBox(
               height: 24,
@@ -163,7 +185,7 @@ class _PassportPhotoState extends State<PassportPhoto>
             const SizedBox(
               height: 40,
             ),
-            file != null
+            file != null && !uploading
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: SizedBox(
@@ -176,10 +198,36 @@ class _PassportPhotoState extends State<PassportPhoto>
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                         onPressed: () async {
-                          await Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const Identification()));
+                          setState(() {
+                            uploading = true;
+                          });
+
+                          final url = await requests.uploadFile(
+                              File(file!.path), "PASSPORT");
+
+                          final res =
+                              await http.patch(Uri.parse(baseUrl + user),
+                                  body: jsonEncode({
+                                    "avatar": url,
+                                  }),
+                                  headers: {
+                                "Accept": "application/json",
+                                "Content-Type": "application/json",
+                                "authorization":
+                                    "Bearer ${prefs.getString('token')}"
+                              });
+
+                          if (res.statusCode == 200) {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const Identification()));
+                          }
+                          messenger(context, "Error uploading photo");
+
+                          setState(() {
+                            uploading = false;
+                          });
                         },
                         child: Text(
                           'Next',
@@ -188,28 +236,33 @@ class _PassportPhotoState extends State<PassportPhoto>
                       ),
                     ),
                   )
-                : Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: MaterialButton(
-                        elevation: 0,
-                        color: const Color(0xFFFFAC30),
-                        height: 50,
-                        minWidth: 200,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        onPressed: () async {
-                          file = await _controller.takePicture();
-                          setState(() {});
-                        },
-                        child: Text(
-                          'Take Photo',
-                          style: Theme.of(context).textTheme.button,
+                : uploading
+                    ? const CircularProgressIndicator(
+                        strokeWidth: 1,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        backgroundColor: Color(0xFFFFAC30))
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: MaterialButton(
+                            elevation: 0,
+                            color: const Color(0xFFFFAC30),
+                            height: 50,
+                            minWidth: 200,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                            onPressed: () async {
+                              file = await _controller.takePicture();
+                              setState(() {});
+                            },
+                            child: Text(
+                              'Take Photo',
+                              style: Theme.of(context).textTheme.button,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
           ]),
         ));
   }

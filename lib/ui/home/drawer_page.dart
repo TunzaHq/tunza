@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tunza/ui/auth/sign_in.dart';
 import 'package:tunza/ui/claims/claims.dart';
 import 'package:tunza/ui/plans/covers.dart';
 import 'package:tunza/ui/help/help.dart';
 import 'package:tunza/ui/home/home_page.dart';
 import 'package:tunza/ui/profile/profile.dart';
+import 'package:tunza/util/globals.dart';
 import 'package:tunza/util/file_path.dart';
 
 class DrawerPage extends StatefulWidget {
@@ -15,7 +18,8 @@ class DrawerPage extends StatefulWidget {
   _DrawerPageState createState() => _DrawerPageState();
 }
 
-class _DrawerPageState extends State<DrawerPage> with TickerProviderStateMixin {
+class _DrawerPageState extends State<DrawerPage>
+    with TickerProviderStateMixin, Glob {
   bool sideBarActive = true;
   late AnimationController rotationController;
   @override
@@ -73,7 +77,14 @@ class _DrawerPageState extends State<DrawerPage> with TickerProviderStateMixin {
                                 backgroundColor:
                                     Theme.of(context).backgroundColor,
                                 child: ClipRRect(
-                                  child: SvgPicture.asset(avatorOne),
+                                  child: Image.network(
+                                    "${userDetail['avatar']}",
+                                    fit: BoxFit.cover,
+                                    width: 50.0,
+                                    height: 50.0,
+                                    errorBuilder: (context, _, __) =>
+                                        SvgPicture.asset(avatorOne),
+                                  ),
                                   borderRadius: BorderRadius.circular(50.0),
                                 ),
                               ),
@@ -86,7 +97,7 @@ class _DrawerPageState extends State<DrawerPage> with TickerProviderStateMixin {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "John Doe",
+                                  "${userDetail?['full_name']}",
                                   style: Theme.of(context).textTheme.headline6,
                                 ),
                                 Text(
@@ -154,22 +165,33 @@ class _DrawerPageState extends State<DrawerPage> with TickerProviderStateMixin {
                 ),
                 Container(
                   padding: const EdgeInsets.all(20),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.power_settings_new,
-                        size: 24,
-                        color: Theme.of(context).iconTheme.color,
-                        // color: sideBarActive ? Colors.black : Colors.white,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "Logout",
-                        style: Theme.of(context).textTheme.headline6,
-                      )
-                    ],
+                  child: GestureDetector(
+                    onTap: () async {
+                      final SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      prefs.remove('token');
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (_) => const SignIn()),
+                          (route) => false);
+                    },
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.power_settings_new,
+                          size: 24,
+                          color: Theme.of(context).iconTheme.color,
+                          // color: sideBarActive ? Colors.black : Colors.white,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Logout",
+                          style: Theme.of(context).textTheme.headline6,
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 Container(

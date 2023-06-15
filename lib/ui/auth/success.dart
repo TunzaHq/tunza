@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:tunza/ui/auth/sign_in.dart';
+import 'package:tunza/ui/home/home_page.dart';
 import 'package:tunza/util/file_path.dart';
 
 class Success extends StatefulWidget {
@@ -48,18 +49,23 @@ class _SplashState extends State<Success> {
     return Align(
       alignment: Alignment.centerLeft,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           SvgPicture.asset(logo),
           const SizedBox(
             height: 18,
           ),
           Text(
-            'Welcome to Tunza!',
+            'Success!',
             style: Theme.of(context).textTheme.headline5,
           ),
           const SizedBox(
             height: 18,
+          ),
+          Text(
+            'Your profile has been updated successfully.',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyText1,
           ),
           const SizedBox(
             height: 18,
@@ -75,10 +81,14 @@ class _SplashState extends State<Success> {
                   borderRadius: BorderRadius.circular(12)),
               onPressed: () async {
                 await Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (_) => const SignIn()));
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const HomePage(
+                              hideAlert: true,
+                            )));
               },
               child: Text(
-                'Sign In',
+                'Get Started',
                 style: Theme.of(context).textTheme.button,
               ),
             ),

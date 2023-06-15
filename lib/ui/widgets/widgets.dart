@@ -91,3 +91,12 @@ Widget claimCard(
         ),
       ),
     );
+
+ScaffoldMessengerState messenger(BuildContext context, String content) =>
+    ScaffoldMessenger.of(context)
+      ..showSnackBar(SnackBar(
+          margin: const EdgeInsets.all(10),
+          behavior: SnackBarBehavior.floating,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          content: Text(content)));

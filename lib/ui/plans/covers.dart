@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tunza/data/requests.dart';
 import 'package:tunza/ui/widgets/services.dart';
 import 'package:tunza/ui/widgets/widgets.dart';
 
@@ -11,6 +12,8 @@ class Plans extends StatefulWidget {
 
 class _PlansState extends State<Plans> {
   final TextEditingController _searchController = TextEditingController();
+
+  final request = Requests();
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -80,7 +83,32 @@ class _PlansState extends State<Plans> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                contentServices(context, 4),
+                FutureBuilder<List<Map<String, dynamic>>?>(
+                    future: request.getUserCovers(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return snapshot.data!.isNotEmpty
+                            ? contentServices(
+                                context,
+                                snapshot.data!.map((e) {
+                                  print(e);
+                                  return (e['plan'] as Map<String, dynamic>)
+                                    ..addAll({"subId": e['id']});
+                                }).toList())
+                            : Center(
+                                child: Text(
+                                  'No covers yet',
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                              );
+                      }
+
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFFFAC30),
+                        ),
+                      );
+                    }),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -91,7 +119,26 @@ class _PlansState extends State<Plans> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                contentServices(context, 3),
+                FutureBuilder<List<Map<String, dynamic>>?>(
+                    future: request.getAllCovers(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return snapshot.data!.isNotEmpty
+                            ? contentServices(context, snapshot.data!)
+                            : Center(
+                                child: Text(
+                                  'No covers yet',
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                              );
+                      }
+
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFFFAC30),
+                        ),
+                      );
+                    }),
                 const SizedBox(
                   height: 30,
                 ),
@@ -105,7 +152,26 @@ class _PlansState extends State<Plans> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                contentServices(context, 7),
+                FutureBuilder<List<Map<String, dynamic>>?>(
+                    future: request.getAllCovers(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return snapshot.data!.isNotEmpty
+                            ? contentServices(context, snapshot.data!)
+                            : Center(
+                                child: Text(
+                                  'No covers yet',
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                              );
+                      }
+
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFFFAC30),
+                        ),
+                      );
+                    }),
               ],
             ),
           ),

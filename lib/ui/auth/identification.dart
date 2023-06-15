@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tunza/data/requests.dart';
 import 'package:tunza/ui/auth/success.dart';
 import 'package:tunza/util/file_path.dart';
 
@@ -17,6 +18,8 @@ class _IdentificationState extends State<Identification> {
   XFile? frontFile;
   XFile? backFile;
 
+  bool isUploading = false;
+  final requests = Requests();
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -27,6 +30,16 @@ class _IdentificationState extends State<Identification> {
             child: Column(children: [
               const SizedBox(
                 height: 80,
+              ),
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.arrow_back))),
+              const SizedBox(
+                height: 10,
               ),
               SizedBox(
                 height: 24,
@@ -143,24 +156,50 @@ class _IdentificationState extends State<Identification> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SizedBox(
                   width: double.infinity,
-                  child: MaterialButton(
-                    elevation: 0,
-                    color: const Color(0xFFFFAC30),
-                    height: 50,
-                    minWidth: 200,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    onPressed: () async {
-                      await Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const Success()));
-                    },
-                    child: Text(
-                      'Next',
-                      style: Theme.of(context).textTheme.button,
-                    ),
-                  ),
+                  child: isUploading
+                      ? const Align(
+                          child: SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 1,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                                backgroundColor: Color(0xFFFFAC30)),
+                          ),
+                        )
+                      : MaterialButton(
+                          elevation: 0,
+                          color: const Color(0xFFFFAC30),
+                          height: 50,
+                          minWidth: 200,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          onPressed: () async {
+                            setState(() {
+                              isUploading = true;
+                            });
+                            final front = await requests.uploadFile(
+                                File(frontFile!.path), 'ID_FRONT');
+                            final back = await requests.uploadFile(
+                                File(backFile!.path), 'ID_BACK');
+
+                            if (front != null && back != null) {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const Success()));
+                            }
+
+                            setState(() {
+                              isUploading = false;
+                            });
+                          },
+                          child: Text(
+                            'Next',
+                            style: Theme.of(context).textTheme.button,
+                          ),
+                        ),
                 ),
               ),
               const Spacer(),
