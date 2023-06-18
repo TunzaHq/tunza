@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:tunza/data/requests.dart';
 import 'package:tunza/ui/home/drawer_page.dart';
+import 'package:tunza/ui/widgets/widgets.dart';
 import 'package:tunza/util/file_path.dart';
 
 class Profile extends StatefulWidget {
@@ -15,11 +17,17 @@ class _ProfileState extends State<Profile> {
   final requests = Requests();
   @override
   Widget build(BuildContext context) {
-    return Material(
-        color: Theme.of(context).backgroundColor,
-        child: FutureBuilder<Map<String, dynamic>?>(
+    return Scaffold(
+        backgroundColor: Theme.of(context).backgroundColor,
+        body: FutureBuilder<Map<String, dynamic>?>(
             future: requests.getUser(),
             builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              final user = snapshot.data!;
               return SizedBox(
                 height: MediaQuery.of(context).size.height,
                 child: ListView(children: [
@@ -66,19 +74,22 @@ class _ProfileState extends State<Profile> {
                   const SizedBox(
                     height: 40,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       children: [
-                        Text(
+                        const Text(
                           "Profile",
                           style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Spacer(),
-                        Icon(Icons.edit_square)
+                        const Spacer(),
+                        GestureDetector(
+                            onTap: () =>
+                                messenger(context, "Functionality disabled"),
+                            child: const Icon(Icons.edit_square))
                       ],
                     ),
                   ),
@@ -95,7 +106,17 @@ class _ProfileState extends State<Profile> {
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: CircleAvatar(
-                        child: SvgPicture.asset(avatorOne),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: Image.network(
+                            "${user['avatar']}",
+                            fit: BoxFit.cover,
+                            height: 100,
+                            width: 100,
+                            errorBuilder: (context, error, stackTrace) =>
+                                SvgPicture.asset(avatorOne),
+                          ),
+                        ),
                         backgroundColor: const Color(0xffFDCF09).withOpacity(1),
                       ),
                     ),
@@ -103,9 +124,9 @@ class _ProfileState extends State<Profile> {
                   const SizedBox(
                     height: 20,
                   ),
-                  const Align(
+                  Align(
                     child: Text(
-                      "John Doe",
+                      "${user['full_name']}",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -135,7 +156,7 @@ class _ProfileState extends State<Profile> {
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                         const Spacer(),
-                        const Text("doe@namani.co")
+                        Text("${user['email']}")
                       ],
                     ),
                   ),
@@ -147,11 +168,11 @@ class _ProfileState extends State<Profile> {
                     child: Row(
                       children: [
                         Text(
-                          "Identification Docs",
+                          "Date Of Birth",
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                         const Spacer(),
-                        const Text("2")
+                        Text("${user['dob'].toString().split('T')[0]}")
                       ],
                     ),
                   ),
@@ -163,11 +184,11 @@ class _ProfileState extends State<Profile> {
                     child: Row(
                       children: [
                         Text(
-                          "Phone Number",
+                          "Occupation",
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                         const Spacer(),
-                        const Text("+254 712 345 678")
+                        Text("${user['occupation']}")
                       ],
                     ),
                   ),
@@ -179,11 +200,61 @@ class _ProfileState extends State<Profile> {
                     child: Row(
                       children: [
                         Text(
-                          "Location",
+                          "Identification Documents",
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                         const Spacer(),
-                        const Text("Nairobi, Kenya")
+                        Text("${user['media'].length}"),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        const Icon(
+                          Icons.open_in_new,
+                          size: 12,
+                        )
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  FutureBuilder<List<Placemark>>(
+                      future: placemarkFromCoordinates(
+                          double.parse(
+                              user['location'].toString().split(',')[0]),
+                          double.parse(
+                              user['location'].toString().split(',')[1])),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const SizedBox();
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Location",
+                                style: Theme.of(context).textTheme.bodyText2,
+                              ),
+                              const Spacer(),
+                              Text("${snapshot.data![0].locality}")
+                            ],
+                          ),
+                        );
+                      }),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Occupation",
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                        const Spacer(),
+                        Text("${user['occupation']}")
                       ],
                     ),
                   ),

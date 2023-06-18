@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tunza/data/requests.dart';
 import 'package:tunza/ui/auth/success.dart';
+import 'package:tunza/ui/widgets/widgets.dart';
 import 'package:tunza/util/file_path.dart';
 
 class Identification extends StatefulWidget {
@@ -34,9 +35,8 @@ class _IdentificationState extends State<Identification> {
               Align(
                   alignment: Alignment.centerLeft,
                   child: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                      onPressed: () async => await exitMessenger(context,
+                          "Are you sure you want to exit? A complete profile is required to use the app"),
                       icon: const Icon(Icons.arrow_back))),
               const SizedBox(
                 height: 10,

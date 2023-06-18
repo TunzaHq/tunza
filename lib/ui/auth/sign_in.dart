@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tunza/ui/auth/sign_up.dart';
 import 'package:tunza/ui/home/home_page.dart';
+import 'package:tunza/ui/widgets/widgets.dart';
 import 'package:tunza/util/globals.dart';
 import 'package:tunza/util/file_path.dart';
 import 'package:http/http.dart' as http;
@@ -23,12 +23,12 @@ class _SignInState extends State<SignIn> with Glob {
 
   Future<void> _signInWithEmailAndPassword() async {
     try {
-      // Obtain shared preferences.
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-
       if (!_signInFormKey.currentState!.validate()) {
         return;
       }
+      setState(() {
+        isLoading = true;
+      });
       final String email = _emailController.text.trim();
       final String password = _passwordController.text.trim();
       final response = await http.post(Uri.parse(baseUrl + signIn),
@@ -40,11 +40,11 @@ class _SignInState extends State<SignIn> with Glob {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           });
-      print(response.body);
 
       if (response.statusCode == 200) {
         final String token = jsonDecode(response.body)['token'].toString();
-        prefs.setString('token', token);
+        prefs?.setString('token', token);
+        await Resources().init();
         await Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => const HomePage()));
       } else {
@@ -55,17 +55,19 @@ class _SignInState extends State<SignIn> with Glob {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             content: const Text("Invalid credentials")));
       }
+      setState(() {
+        isLoading = false;
+      });
     } catch (e) {
       print(e);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          margin: const EdgeInsets.all(10),
-          behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          content: const Text("An error occurred while signing in")));
+      messenger(context, "An error occurred");
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,19 +177,31 @@ class _SignInState extends State<SignIn> with Glob {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: SizedBox(
                           width: double.infinity,
-                          child: MaterialButton(
-                            elevation: 0,
-                            color: const Color(0xFFFFAC30),
-                            height: 50,
-                            minWidth: 200,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
-                            onPressed: _signInWithEmailAndPassword,
-                            child: Text(
-                              'Sign in',
-                              style: Theme.of(context).textTheme.button,
-                            ),
-                          ),
+                          child: isLoading
+                              ? const Align(
+                                  child: SizedBox(
+                                    height: 50,
+                                    width: 50,
+                                    child: CircularProgressIndicator.adaptive(
+                                      backgroundColor: Color(0xFFFFAC30),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
+                                    ),
+                                  ),
+                                )
+                              : MaterialButton(
+                                  elevation: 0,
+                                  color: const Color(0xFFFFAC30),
+                                  height: 50,
+                                  minWidth: 200,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  onPressed: _signInWithEmailAndPassword,
+                                  child: Text(
+                                    'Sign in',
+                                    style: Theme.of(context).textTheme.button,
+                                  ),
+                                ),
                         ),
                       ),
                       const SizedBox(

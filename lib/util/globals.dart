@@ -1,4 +1,7 @@
+import 'dart:isolate';
+
 import 'package:cloudinary/cloudinary.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tunza/data/requests.dart';
 
@@ -29,6 +32,11 @@ mixin Glob {
 
   var prefs = Resources().prefs;
   var userDetail = Resources().userDetail;
+
+  void reset() {
+    prefs = null;
+    userDetail = Resources().userDetail;
+  }
 }
 
 class Resources {
@@ -41,11 +49,13 @@ class Resources {
 
   Resources._internal();
 
-  late SharedPreferences prefs;
+  SharedPreferences? prefs;
   Map<String, dynamic> userDetail = {};
 
   Future<void> init() async {
     prefs = await SharedPreferences.getInstance();
     userDetail = await Requests().getUser() ?? {};
+    await Requests().updateUserLocation(null);
+  
   }
 }

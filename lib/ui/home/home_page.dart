@@ -3,9 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tunza/data/requests.dart';
+import 'package:tunza/ui/auth/bio_data.dart';
 import 'package:tunza/ui/auth/passport_photo.dart';
 import 'package:tunza/ui/plans/covers.dart';
-import 'package:tunza/ui/plans/view_plans.dart';
 import 'package:tunza/ui/widgets/services.dart';
 import 'package:tunza/ui/widgets/widgets.dart';
 import 'package:tunza/util/globals.dart';
@@ -21,6 +21,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with Glob {
   final requests = Requests();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,7 +118,7 @@ class _HomePageState extends State<HomePage> with Glob {
                                     child: Container(
                                         margin:
                                             const EdgeInsets.only(bottom: 20),
-                                        height: 220,
+                                        height: 200,
                                         width:
                                             MediaQuery.of(context).size.width -
                                                 40,
@@ -135,16 +141,15 @@ class _HomePageState extends State<HomePage> with Glob {
                                                   width: 48,
                                                   child: SvgPicture.asset(logo),
                                                 )),
-                                            Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 12,
-                                                    vertical: 24),
-                                                height: 300,
+                                            SizedBox(
+                                                height: 200,
                                                 width: MediaQuery.of(context)
                                                         .size
                                                         .width -
                                                     40,
                                                 child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
                                                   children: [
                                                     Align(
                                                         alignment:
@@ -168,7 +173,7 @@ class _HomePageState extends State<HomePage> with Glob {
                                                         alignment:
                                                             Alignment.topCenter,
                                                         child: Text(
-                                                          'Upload your Passport Photo and ID/Passport Documents to complete your profile',
+                                                          'Update your profile to get started',
                                                           textAlign:
                                                               TextAlign.center,
                                                           style: Theme.of(
@@ -202,10 +207,10 @@ class _HomePageState extends State<HomePage> with Glob {
                                                             MaterialPageRoute(
                                                                 builder:
                                                                     (context) =>
-                                                                        const PassportPhoto()));
+                                                                        const BioData()));
                                                       },
                                                       child: Text(
-                                                        'Upload Documents',
+                                                        'Update Profile',
                                                         style: Theme.of(context)
                                                             .textTheme
                                                             .button

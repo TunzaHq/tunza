@@ -2,14 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
-import 'package:cloudinary/cloudinary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tunza/data/requests.dart';
 import 'package:tunza/ui/auth/identification.dart';
-import 'package:tunza/ui/home/home_page.dart';
 import 'package:tunza/ui/widgets/widgets.dart';
 import 'package:tunza/util/globals.dart';
 import 'package:tunza/util/file_path.dart';
@@ -99,9 +96,8 @@ class _PassportPhotoState extends State<PassportPhoto>
             Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () async => await exitMessenger(context,
+                        "Are you sure you want to exit? A complete profile is required to use the app"),
                     icon: const Icon(Icons.arrow_back))),
             const SizedBox(
               height: 10,
@@ -214,7 +210,7 @@ class _PassportPhotoState extends State<PassportPhoto>
                                 "Accept": "application/json",
                                 "Content-Type": "application/json",
                                 "authorization":
-                                    "Bearer ${prefs.getString('token')}"
+                                    "Bearer ${prefs?.getString('token')}"
                               });
 
                           if (res.statusCode == 200) {

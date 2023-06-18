@@ -23,7 +23,7 @@ Widget contentHeader(BuildContext context, Widget child) {
         ],
       ),
       InkWell(
-        onTap: () async => Navigator.pushReplacement(
+        onTap: () async => await Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (context) => DrawerPage(
@@ -100,3 +100,24 @@ ScaffoldMessengerState messenger(BuildContext context, String content) =>
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           content: Text(content)));
+Future<void> exitMessenger(BuildContext context, String message) async {
+  bool shouldExit = await showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+            title: Text(
+              message,
+              style: Theme.of(context).textTheme.bodyText2,
+            ),
+            icon: SvgPicture.asset(logo),
+            actions: [
+              TextButton(
+                  style: TextButton.styleFrom(primary: Colors.red),
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text("Yes")),
+              TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text("No")),
+            ],
+          ));
+  if (shouldExit) Navigator.pop(context);
+}

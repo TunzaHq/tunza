@@ -1,6 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tunza/ui/auth/sign_in.dart';
 import 'package:tunza/ui/claims/claims.dart';
 import 'package:tunza/ui/plans/covers.dart';
@@ -28,8 +28,6 @@ class _DrawerPageState extends State<DrawerPage>
         duration: const Duration(milliseconds: 300), vsync: this);
     super.initState();
   }
-
-  int selected = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -97,11 +95,11 @@ class _DrawerPageState extends State<DrawerPage>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "${userDetail?['full_name']}",
+                                  "${userDetail['full_name']}",
                                   style: Theme.of(context).textTheme.headline6,
                                 ),
                                 Text(
-                                  "Nairobi, Kenya",
+                                  "${userDetail['email']}",
                                   style: Theme.of(context).textTheme.bodyText1,
                                 )
                               ],
@@ -141,8 +139,8 @@ class _DrawerPageState extends State<DrawerPage>
                                     MaterialPageRoute(
                                         builder: (context) => const Claims()))
                               },
-                          child:
-                              navigatorTitle("Claims", widget.child is Claims)),
+                          child: navigatorTitle(
+                              "Claims", widget.child is Claims)),
                       GestureDetector(
                           onTap: () => {
                                 Navigator.push(
@@ -167,9 +165,7 @@ class _DrawerPageState extends State<DrawerPage>
                   padding: const EdgeInsets.all(20),
                   child: GestureDetector(
                     onTap: () async {
-                      final SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      prefs.remove('token');
+                      prefs?.remove('token');
                       Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(builder: (_) => const SignIn()),

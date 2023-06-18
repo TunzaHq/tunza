@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tunza/ui/auth/sign_in.dart';
+import 'package:tunza/ui/widgets/widgets.dart';
 import 'package:tunza/util/globals.dart';
 import 'package:tunza/util/file_path.dart';
 import 'package:http/http.dart' as http;
@@ -50,8 +51,9 @@ class _SignUpState extends State<SignUp> with Glob {
         },
       );
 
-      print(response.body);
       if (response.statusCode == 201) {
+
+        messenger(context, "Account created successfully");
         await Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => const SignIn()));
       } else {
