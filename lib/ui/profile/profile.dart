@@ -18,7 +18,7 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: FutureBuilder<Map<String, dynamic>?>(
             future: requests.getUser(),
             builder: (context, snapshot) {
@@ -127,7 +127,7 @@ class _ProfileState extends State<Profile> {
                   Align(
                     child: Text(
                       "${user['full_name']}",
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -141,7 +141,7 @@ class _ProfileState extends State<Profile> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text("Personal Information",
-                          style: Theme.of(context).textTheme.bodyText1),
+                          style: Theme.of(context).textTheme.bodyLarge),
                     ),
                   ),
                   const SizedBox(
@@ -153,7 +153,7 @@ class _ProfileState extends State<Profile> {
                       children: [
                         Text(
                           "Email",
-                          style: Theme.of(context).textTheme.bodyText2,
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const Spacer(),
                         Text("${user['email']}")
@@ -169,10 +169,10 @@ class _ProfileState extends State<Profile> {
                       children: [
                         Text(
                           "Date Of Birth",
-                          style: Theme.of(context).textTheme.bodyText2,
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const Spacer(),
-                        Text("${user['dob'].toString().split('T')[0]}")
+                        Text(user['dob'].toString().split('T')[0])
                       ],
                     ),
                   ),
@@ -185,7 +185,7 @@ class _ProfileState extends State<Profile> {
                       children: [
                         Text(
                           "Occupation",
-                          style: Theme.of(context).textTheme.bodyText2,
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const Spacer(),
                         Text("${user['occupation']}")
@@ -201,7 +201,7 @@ class _ProfileState extends State<Profile> {
                       children: [
                         Text(
                           "Identification Documents",
-                          style: Theme.of(context).textTheme.bodyText2,
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const Spacer(),
                         Text("${user['media'].length}"),
@@ -234,7 +234,7 @@ class _ProfileState extends State<Profile> {
                             children: [
                               Text(
                                 "Location",
-                                style: Theme.of(context).textTheme.bodyText2,
+                                style: Theme.of(context).textTheme.bodyMedium,
                               ),
                               const Spacer(),
                               Text("${snapshot.data![0].locality}")
@@ -251,7 +251,7 @@ class _ProfileState extends State<Profile> {
                       children: [
                         Text(
                           "Occupation",
-                          style: Theme.of(context).textTheme.bodyText2,
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const Spacer(),
                         Text("${user['occupation']}")

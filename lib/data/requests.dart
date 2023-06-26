@@ -8,6 +8,60 @@ import 'package:http/http.dart' as http;
 import 'package:tunza/util/globals.dart';
 
 class Requests with Glob {
+  Future<Map<String, dynamic>?> getUserClaim(int claimId) async {
+    final res = await http
+        .get(Uri.parse(baseUrl + user + '/claims/$claimId'), headers: {
+      "authorization": "Bearer ${prefs?.getString('token')}",
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    });
+    if (res.statusCode != 200) return null;
+    return Map<String, dynamic>.from(json.decode(res.body));
+  }
+
+  Future<bool> createClaim(
+      int coverId, int subId, Map<int?, String?> data) async {
+    final position = await _determinePosition();
+    // Create Claim
+    final res = await http.post(Uri.parse(baseUrl + claims),
+        headers: {
+          "authorization": "Bearer ${prefs?.getString('token')}",
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: jsonEncode({
+          "location": "${position.latitude},${position.longitude}",
+          "subscription_id": subId,
+          "description": "USER INITIATED CLAIM",
+          "plan_id": coverId
+        }));
+
+    if (res.statusCode != 201) return false;
+    final claimId = json.decode(res.body)['id'];
+
+    var answers = [];
+
+    for (var i = 0; i < data.length; i++) {
+      answers.add({
+        "question_id": data.keys.elementAt(i),
+        "answer": data.values.elementAt(i)
+      });
+    }
+
+    final response =
+        await http.post(Uri.parse(baseUrl + claims + '/$claimId/answer'),
+            headers: {
+              "authorization": "Bearer ${prefs?.getString('token')}",
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: jsonEncode({
+              "answers": answers,
+            }));
+
+    return response.statusCode == 201;
+  }
+
   Future<List<Map<String, dynamic>>?> getAllCovers() async {
     try {
       final response = await http.get(Uri.parse(baseUrl + covers), headers: {
@@ -43,7 +97,6 @@ class Requests with Glob {
         'Content-Type': 'application/json',
         "authorization": "Bearer ${prefs?.getString('token')}"
       });
-      print(response.body);
       if (response.statusCode == 200) {
         return Map<String, dynamic>.from(json.decode(response.body));
       }
@@ -53,15 +106,17 @@ class Requests with Glob {
     }
   }
 
-  Future<List<Map<String, dynamic>>?> getUserCovers() async {
+  Future<List<Map<String, dynamic>>?> getUserCovers([String? status]) async {
     try {
-      final response =
-          await http.get(Uri.parse(baseUrl + user + '/covers'), headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        "authorization": "Bearer ${prefs?.getString('token')}"
-      });
-      print(response.body);
+      final response = await http.get(
+          Uri.parse(baseUrl +
+              user +
+              '/covers${status != null ? '?status=${status.toUpperCase()}' : ''}'),
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            "authorization": "Bearer ${prefs?.getString('token')}"
+          });
       return List<Map<String, dynamic>>.from(json.decode(response.body));
     } catch (e) {
       print(e);
@@ -70,34 +125,24 @@ class Requests with Glob {
   }
 
   Future<Map<String, dynamic>?> getUser() async {
-    try {
-      final response = await http.get(Uri.parse(baseUrl + user), headers: {
-        "authorization": "Bearer ${prefs?.getString('token')}",
-      });
+    final response = await http.get(Uri.parse(baseUrl + user), headers: {
+      "authorization": "Bearer ${prefs?.getString('token')}",
+    });
 
-      if (response.statusCode == 200) {
-        return userDetail =
-            Map<String, dynamic>.from(json.decode(response.body));
-      }
-      return null;
-    } catch (e) {
-      print(e);
-      return null;
+    if (response.statusCode == 200) {
+      return userDetail = Map<String, dynamic>.from(json.decode(response.body));
     }
+    return null;
   }
 
   Future<String?> uploadFile(File file, String type) async {
-    final cloud = await cloudinary
-        .upload(
+    final cloud = await cloudinary.upload(
       file: file.path,
       fileBytes: file.readAsBytesSync(),
       resourceType: CloudinaryResourceType.image,
       fileName: file.path.split('/').last.split('.').first +
           '${DateTime.now().millisecondsSinceEpoch}',
-    )
-        .catchError((e) {
-      print(e);
-    });
+    );
 
     await http.post(Uri.parse(baseUrl + media),
         body: jsonEncode({
@@ -205,5 +250,33 @@ class Requests with Glob {
     return List<Map<String, dynamic>>.from(json.decode(response.body));
   }
 
-  
+  Future<bool> subscribe(int coverId) async {
+    final response = await http.post(Uri.parse(baseUrl + subscriptions),
+        body: jsonEncode({"plan_id": coverId}),
+        headers: {
+          "authorization": "Bearer ${prefs?.getString('token')}",
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        }).catchError((e) {
+      print(e);
+    });
+
+    return response.statusCode == 200;
+  }
+
+  Future<List<Map<String, dynamic>>?> getQuestions(int coverId) async {
+    final response = await http
+        .get(Uri.parse(baseUrl + covers + '/$coverId/questions'), headers: {
+      "authorization": "Bearer ${prefs?.getString('token')}",
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    }).catchError((e) {
+      print(e);
+    });
+
+    if (response.statusCode == 200) {
+      return List<Map<String, dynamic>>.from(json.decode(response.body));
+    }
+    return null;
+  }
 }

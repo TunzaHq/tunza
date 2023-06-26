@@ -1,7 +1,5 @@
-import 'dart:isolate';
 
 import 'package:cloudinary/cloudinary.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tunza/data/requests.dart';
 
@@ -19,10 +17,13 @@ mixin Glob {
   final String covers = '/covers';
 
   //Subscriptions
-  final String subscriptions = '/subscriptions/me';
+  final String subscriptions = '/subscriptions';
 
   //Media
   final String media = '/media';
+
+  //Claims
+  final String claims = '/claims';
 
   final cloudinary = Cloudinary.signedConfig(
     apiKey: "327631884356837",
@@ -53,9 +54,16 @@ class Resources {
   Map<String, dynamic> userDetail = {};
 
   Future<void> init() async {
-    prefs = await SharedPreferences.getInstance();
-    userDetail = await Requests().getUser() ?? {};
-    await Requests().updateUserLocation(null);
-  
+    try {
+      prefs = await SharedPreferences.getInstance();
+      userDetail = await Requests().getUser() ?? {};
+      await Requests().updateUserLocation(null);
+    } catch (e) {
+      print(e);
+    }
   }
+}
+
+extension DateTimeExt on DateTime {
+  String get yyyyMMdd => '$year-$month-$day';
 }

@@ -71,7 +71,7 @@ class _SignInState extends State<SignIn> with Glob {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: SingleChildScrollView(
           child: SizedBox(
             height: MediaQuery.of(context).size.height,
@@ -124,7 +124,7 @@ class _SignInState extends State<SignIn> with Glob {
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             labelText: 'Email',
-                            labelStyle: Theme.of(context).textTheme.bodyText1,
+                            labelStyle: Theme.of(context).textTheme.bodyLarge,
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12)),
                             focusedBorder: OutlineInputBorder(
@@ -152,7 +152,7 @@ class _SignInState extends State<SignIn> with Glob {
                           obscureText: true,
                           decoration: InputDecoration(
                             labelText: 'Password',
-                            labelStyle: Theme.of(context).textTheme.bodyText1,
+                            labelStyle: Theme.of(context).textTheme.bodyLarge,
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12)),
                             focusedBorder: OutlineInputBorder(
@@ -199,7 +199,7 @@ class _SignInState extends State<SignIn> with Glob {
                                   onPressed: _signInWithEmailAndPassword,
                                   child: Text(
                                     'Sign in',
-                                    style: Theme.of(context).textTheme.button,
+                                    style: Theme.of(context).textTheme.labelLarge,
                                   ),
                                 ),
                         ),

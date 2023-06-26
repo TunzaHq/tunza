@@ -11,7 +11,7 @@ class Help extends StatefulWidget {
 }
 
 class _HelpState extends State<Help> {
-  List<Item> _data = generateItems(8);
+  final List<Item> _data = generateItems(8);
 
   static List<Item> generateItems(int numberOfItems) {
     return List.generate(numberOfItems, (int index) {
@@ -25,7 +25,7 @@ class _HelpState extends State<Help> {
   @override
   Widget build(BuildContext context) {
     return Material(
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).colorScheme.background,
         child: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: ListView(children: [
@@ -89,7 +89,7 @@ class _HelpState extends State<Help> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text("Contact Us",
-                    style: Theme.of(context).textTheme.bodyText1),
+                    style: Theme.of(context).textTheme.bodyLarge),
               ),
             ),
             const SizedBox(
@@ -101,7 +101,7 @@ class _HelpState extends State<Help> {
                 children: [
                   Text(
                     "Email",
-                    style: Theme.of(context).textTheme.bodyText2,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const Spacer(),
                   const Text("help@tunza.io")
@@ -117,7 +117,7 @@ class _HelpState extends State<Help> {
                 children: [
                   Text(
                     "Free Call",
-                    style: Theme.of(context).textTheme.bodyText2,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const Spacer(),
                   const Text("+254 712 345 678")
@@ -133,7 +133,7 @@ class _HelpState extends State<Help> {
                 children: [
                   Text(
                     "Telegram",
-                    style: Theme.of(context).textTheme.bodyText2,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const Spacer(),
                   const Text("@tunza")
@@ -148,7 +148,7 @@ class _HelpState extends State<Help> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child:
-                    Text("FAQs", style: Theme.of(context).textTheme.bodyText1),
+                    Text("FAQs", style: Theme.of(context).textTheme.bodyLarge),
               ),
             ),
             const SizedBox(
@@ -158,7 +158,7 @@ class _HelpState extends State<Help> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: ExpansionPanelList(
                 expandedHeaderPadding: EdgeInsets.zero,
-                dividerColor: Theme.of(context).backgroundColor,
+                dividerColor: Theme.of(context).colorScheme.background,
                 elevation: 0,
                 expandIconColor: const Color(0xFFFFAC30),
                 expansionCallback: (int index, bool isExpanded) {
@@ -168,12 +168,12 @@ class _HelpState extends State<Help> {
                 },
                 children: _data.map<ExpansionPanel>((Item item) {
                   return ExpansionPanel(
-                    backgroundColor: Theme.of(context).backgroundColor,
+                    backgroundColor: Theme.of(context).colorScheme.background,
                     headerBuilder: (BuildContext context, bool isExpanded) {
                       return ListTile(
                         contentPadding: EdgeInsets.zero,
                         title: Text(item.headerValue,
-                            style: Theme.of(context).textTheme.bodyText2),
+                            style: Theme.of(context).textTheme.bodyMedium),
                       );
                     },
                     body: ListTile(

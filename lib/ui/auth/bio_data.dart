@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tunza/data/requests.dart';
-import 'package:tunza/ui/auth/identification.dart';
 import 'package:tunza/ui/auth/passport_photo.dart';
 import 'package:tunza/ui/widgets/widgets.dart';
 import 'package:tunza/util/globals.dart';
@@ -70,7 +69,7 @@ class _BioDataState extends State<BioData> with WidgetsBindingObserver, Glob {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: SingleChildScrollView(
           child: SizedBox(
             height: MediaQuery.of(context).size.height,
@@ -135,7 +134,7 @@ class _BioDataState extends State<BioData> with WidgetsBindingObserver, Glob {
                     controller: occupationController,
                     decoration: InputDecoration(
                       labelText: 'Occupation',
-                      labelStyle: Theme.of(context).textTheme.bodyText1,
+                      labelStyle: Theme.of(context).textTheme.bodyLarge,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12)),
                       focusedBorder: OutlineInputBorder(
@@ -161,7 +160,7 @@ class _BioDataState extends State<BioData> with WidgetsBindingObserver, Glob {
                     controller: genderController,
                     decoration: InputDecoration(
                       labelText: 'Gender',
-                      labelStyle: Theme.of(context).textTheme.bodyText1,
+                      labelStyle: Theme.of(context).textTheme.bodyLarge,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12)),
                       focusedBorder: OutlineInputBorder(
@@ -196,7 +195,7 @@ class _BioDataState extends State<BioData> with WidgetsBindingObserver, Glob {
                     },
                     decoration: InputDecoration(
                       labelText: 'Date of Birth',
-                      labelStyle: Theme.of(context).textTheme.bodyText1,
+                      labelStyle: Theme.of(context).textTheme.bodyLarge,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12)),
                       focusedBorder: OutlineInputBorder(
@@ -232,7 +231,7 @@ class _BioDataState extends State<BioData> with WidgetsBindingObserver, Glob {
                             onPressed: updateProfile,
                             child: Text(
                               'Next',
-                              style: Theme.of(context).textTheme.button,
+                              style: Theme.of(context).textTheme.labelLarge,
                             ),
                           ),
                         ),

@@ -19,7 +19,7 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme.of(context).backgroundColor,
+      color: Theme.of(context).colorScheme.background,
       child: SafeArea(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -62,7 +62,7 @@ class _SplashState extends State<Splash> {
           children: <Widget>[
             Text(
               formattedTime,
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(
               width: 30,
@@ -73,7 +73,7 @@ class _SplashState extends State<Splash> {
             ),
             Text(
               '34° C',
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
           ],
         ),
@@ -82,7 +82,7 @@ class _SplashState extends State<Splash> {
         ),
         Text(
           formattedDate,
-          style: Theme.of(context).textTheme.bodyText2,
+          style: Theme.of(context).textTheme.bodyMedium,
         )
       ],
     );
@@ -100,14 +100,14 @@ class _SplashState extends State<Splash> {
           ),
           Text(
             'Tunza',
-            style: Theme.of(context).textTheme.headline5,
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(
             height: 18,
           ),
           Text(
             'Easily manage your Britam Insurance Premiums .\nInstant Payouts. \n\nJoin For Free.',
-            style: Theme.of(context).textTheme.bodyText1,
+            style: Theme.of(context).textTheme.bodyLarge,
           )
         ],
       ),
@@ -134,7 +134,7 @@ class _SplashState extends State<Splash> {
           },
           child: Text(
             'Sign in',
-            style: Theme.of(context).textTheme.button,
+            style: Theme.of(context).textTheme.labelLarge,
           ),
         ),
         const SizedBox(
@@ -143,7 +143,7 @@ class _SplashState extends State<Splash> {
         TextButton(
             child: Text(
               'Create an Account',
-              style: Theme.of(context).textTheme.bodyText2,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             onPressed: () => Navigator.push(
                   context,

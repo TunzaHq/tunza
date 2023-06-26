@@ -72,7 +72,7 @@ class _PassportPhotoState extends State<PassportPhoto>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -227,7 +227,7 @@ class _PassportPhotoState extends State<PassportPhoto>
                         },
                         child: Text(
                           'Next',
-                          style: Theme.of(context).textTheme.button,
+                          style: Theme.of(context).textTheme.labelLarge,
                         ),
                       ),
                     ),
@@ -254,7 +254,7 @@ class _PassportPhotoState extends State<PassportPhoto>
                             },
                             child: Text(
                               'Take Photo',
-                              style: Theme.of(context).textTheme.button,
+                              style: Theme.of(context).textTheme.labelLarge,
                             ),
                           ),
                         ),

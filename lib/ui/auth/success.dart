@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:tunza/ui/auth/sign_in.dart';
 import 'package:tunza/ui/home/home_page.dart';
 import 'package:tunza/util/file_path.dart';
 
@@ -15,7 +14,7 @@ class _SplashState extends State<Success> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme.of(context).backgroundColor,
+      color: Theme.of(context).colorScheme.background,
       child: SafeArea(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -57,7 +56,7 @@ class _SplashState extends State<Success> {
           ),
           Text(
             'Success!',
-            style: Theme.of(context).textTheme.headline5,
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(
             height: 18,
@@ -65,7 +64,7 @@ class _SplashState extends State<Success> {
           Text(
             'Your profile has been updated successfully.',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyText1,
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(
             height: 18,
@@ -89,7 +88,7 @@ class _SplashState extends State<Success> {
               },
               child: Text(
                 'Get Started',
-                style: Theme.of(context).textTheme.button,
+                style: Theme.of(context).textTheme.labelLarge,
               ),
             ),
           ),

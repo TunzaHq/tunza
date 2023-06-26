@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tunza/data/requests.dart';
+import 'package:tunza/ui/claims/claim_questions.dart';
 import 'package:tunza/ui/widgets/services.dart';
+import 'package:tunza/ui/widgets/widgets.dart';
 import 'package:tunza/util/globals.dart';
 import 'package:tunza/util/file_path.dart';
 
@@ -18,6 +20,8 @@ class ViewPlans extends StatefulWidget {
 class _ViewPlansState extends State<ViewPlans> with Glob {
   final requests = Requests();
 
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Map<String, dynamic>?>(
@@ -25,7 +29,7 @@ class _ViewPlansState extends State<ViewPlans> with Glob {
         builder: (context, snapshot) {
           final Map<String, dynamic>? data = snapshot.data;
           return Material(
-              color: Theme.of(context).backgroundColor,
+              color: Theme.of(context).colorScheme.background,
               child: SizedBox(
                 height: MediaQuery.of(context).size.height,
                 child: ListView(children: [
@@ -70,7 +74,7 @@ class _ViewPlansState extends State<ViewPlans> with Glob {
                       ? Align(
                           child: Text(
                             "${data['name']}",
-                            style: Theme.of(context).textTheme.headline4,
+                            style: Theme.of(context).textTheme.headlineMedium,
                           ),
                         )
                       : const SizedBox.shrink(),
@@ -100,7 +104,7 @@ class _ViewPlansState extends State<ViewPlans> with Glob {
                           alignment: Alignment.centerLeft,
                           child: Text(
                             "Ksh. ${data != null ? data['price'] : 0}",
-                            style: Theme.of(context).textTheme.bodyText1
+                            style: Theme.of(context).textTheme.bodyLarge
                               ?..copyWith(
                                   color: Theme.of(context).primaryColor),
                           ),
@@ -122,7 +126,7 @@ class _ViewPlansState extends State<ViewPlans> with Glob {
                                           child: Text("Claim",
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .button!),
+                                                  .labelLarge!),
                                           style: TextButton.styleFrom(
                                             backgroundColor:
                                                 const Color(0xFFFFAC30),
@@ -131,23 +135,62 @@ class _ViewPlansState extends State<ViewPlans> with Glob {
                                                   BorderRadius.circular(10),
                                             ),
                                           ),
-                                          onPressed: () {},
-                                        )
-                                      : TextButton(
-                                          child: Text("Subscribe",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .button!),
-                                          style: TextButton.styleFrom(
-                                            backgroundColor:
-                                                const Color(0xFFFFAC30),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
+                                          onPressed: () async =>
+                                              await Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          ClaimQuestions(
+                                                              subId:
+                                                                  widget.subId,
+                                                              coverId:
+                                                                  widget.id))))
+                                      : isLoading
+                                          ? const Align(
+                                              child: SizedBox(
+                                                height: 24,
+                                                width: 24,
+                                                child: CircularProgressIndicator
+                                                    .adaptive(
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                          Color>(Colors.white),
+                                                  backgroundColor:
+                                                      Color(0xFFFFAC30),
+                                                ),
+                                              ),
+                                            )
+                                          : TextButton(
+                                              child: Text("Subscribe",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .labelLarge!),
+                                              style: TextButton.styleFrom(
+                                                backgroundColor:
+                                                    const Color(0xFFFFAC30),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                              ),
+                                              onPressed: () async {
+                                                setState(() {
+                                                  isLoading = true;
+                                                });
+                                                final res = await requests
+                                                    .subscribe(widget.id);
+
+                                                if (res) {
+                                                  messenger(context,
+                                                      "Subscribed successfully");
+                                                }
+                                                messenger(context,
+                                                    "An error occurred: Try again later");
+                                                setState(() {
+                                                  isLoading = false;
+                                                });
+                                              },
                                             ),
-                                          ),
-                                          onPressed: () {},
-                                        ),
                                 );
                               }
                               return const SizedBox.shrink();
@@ -165,7 +208,7 @@ class _ViewPlansState extends State<ViewPlans> with Glob {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Simillar products",
-                        style: Theme.of(context).textTheme.headline4,
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
                     ),
                   ),
@@ -174,7 +217,11 @@ class _ViewPlansState extends State<ViewPlans> with Glob {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: contentServices(context, widget.simillar ?? []),
+                    child: contentServices(
+                        context,
+                        (widget.simillar ?? [])
+                          ..removeWhere(
+                              (element) => element['id'] == widget.id)),
                   )
                 ]),
               ));

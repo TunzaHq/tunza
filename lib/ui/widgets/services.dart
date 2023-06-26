@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tunza/ui/plans/view_plans.dart';
 
 Widget contentServices(BuildContext context, List<Map<String, dynamic>> data) {
-  print("Data hereree $data");
   List<ModelServices> listServices = data
       .map((value) => ModelServices(
             title: value['name'],
@@ -48,7 +47,7 @@ Widget contentServices(BuildContext context, List<Map<String, dynamic>> data) {
                         borderRadius: BorderRadius.circular(8),
                         color: Theme.of(context).cardColor,
                       ),
-                      child: SvgPicture.asset(
+                      child: SvgPicture.network(
                         value.img,
                         color: Theme.of(context).iconTheme.color,
                       ),
@@ -59,7 +58,7 @@ Widget contentServices(BuildContext context, List<Map<String, dynamic>> data) {
                     Text(
                       value.title,
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyText1,
+                      style: Theme.of(context).textTheme.bodyLarge,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(

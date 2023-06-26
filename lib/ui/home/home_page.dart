@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tunza/data/requests.dart';
 import 'package:tunza/ui/auth/bio_data.dart';
-import 'package:tunza/ui/auth/passport_photo.dart';
 import 'package:tunza/ui/plans/covers.dart';
+import 'package:tunza/ui/plans/view_plans.dart';
 import 'package:tunza/ui/widgets/services.dart';
 import 'package:tunza/ui/widgets/widgets.dart';
 import 'package:tunza/util/globals.dart';
@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> with Glob {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
         child: Stack(
           children: [
@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> with Glob {
                   ),
                   Text(
                     'Account Overview',
-                    style: Theme.of(context).textTheme.headline4,
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(
                     height: 16,
@@ -59,12 +59,35 @@ class _HomePageState extends State<HomePage> with Glob {
                     children: <Widget>[
                       Text(
                         'Active Plans',
-                        style: Theme.of(context).textTheme.headline4,
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  _contentSubscriptions(),
+                  FutureBuilder<List<Map<String, dynamic>>?>(
+                      future: requests.getUserCovers("active"),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                          return _contentSubscriptions(snapshot.data!.map((e) {
+                            print(e);
+                            return (e['plan'] as Map<String, dynamic>)
+                              ..addAll({"subId": e['id']});
+                          }).toList());
+                        }
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return Center(
+                            child: Text(
+                              'No active plans',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                          );
+                        }
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xFFFFAC30),
+                          ),
+                        );
+                      }),
                   const SizedBox(
                     height: 30,
                   ),
@@ -73,7 +96,7 @@ class _HomePageState extends State<HomePage> with Glob {
                     children: <Widget>[
                       Text(
                         'Services',
-                        style: Theme.of(context).textTheme.headline4,
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       Visibility(
                         visible: false,
@@ -114,7 +137,7 @@ class _HomePageState extends State<HomePage> with Glob {
                               child: Align(
                                   alignment: Alignment.center,
                                   child: Card(
-                                    color: Theme.of(context).backgroundColor,
+                                    color: Theme.of(context).colorScheme.background,
                                     child: Container(
                                         margin:
                                             const EdgeInsets.only(bottom: 20),
@@ -159,7 +182,7 @@ class _HomePageState extends State<HomePage> with Glob {
                                                           style: Theme.of(
                                                                   context)
                                                               .textTheme
-                                                              .headline4!
+                                                              .headlineMedium!
                                                               .copyWith(
                                                                   fontSize: 18,
                                                                   fontWeight:
@@ -179,7 +202,7 @@ class _HomePageState extends State<HomePage> with Glob {
                                                           style: Theme.of(
                                                                   context)
                                                               .textTheme
-                                                              .headline4!
+                                                              .headlineMedium!
                                                               .copyWith(
                                                                   fontWeight:
                                                                       FontWeight
@@ -213,7 +236,7 @@ class _HomePageState extends State<HomePage> with Glob {
                                                         'Update Profile',
                                                         style: Theme.of(context)
                                                             .textTheme
-                                                            .button
+                                                            .labelLarge
                                                             ?.copyWith(
                                                                 fontSize: 12),
                                                       ),
@@ -250,14 +273,14 @@ class _HomePageState extends State<HomePage> with Glob {
             children: <Widget>[
               Text(
                 'kes. 20,600',
-                style: Theme.of(context).textTheme.headline5,
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(
                 height: 12,
               ),
               Text(
                 'Premium Balance',
-                style: Theme.of(context).textTheme.headline4!.copyWith(
+                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                       fontSize: 15,
                       fontWeight: FontWeight.w400,
                     ),
@@ -282,7 +305,9 @@ class _HomePageState extends State<HomePage> with Glob {
     );
   }
 
-  Widget _contentSubscriptions() {
+  Widget _contentSubscriptions(List<Map<String, dynamic>> data) {
+    var model = data.map((e) => ModelServices(
+        title: e['name'], img: e['icon'], id: e['id'], subId: e['subId']));
     return SizedBox(
       height: 100,
       child: ListView(
@@ -298,7 +323,7 @@ class _HomePageState extends State<HomePage> with Glob {
             ),
             child: InkWell(
               splashColor: const Color(0xffFFAC30),
-              onTap: () => Navigator.push(
+              onTap: () async => await Navigator.push(
                   context, MaterialPageRoute(builder: (_) => const Plans())),
               child: Container(
                 height: 10,
@@ -315,115 +340,49 @@ class _HomePageState extends State<HomePage> with Glob {
               ),
             ),
           ),
-          GestureDetector(
-            // onTap: () => Navigator.push(context,
-            //     MaterialPageRoute(builder: (_) => const ViewPlans(id: 12))),
-            child: Container(
-              margin: const EdgeInsets.only(right: 10),
-              padding: const EdgeInsets.all(16),
-              width: 80,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Theme.of(context).cardColor,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                        border: Border.all(color: const Color(0xffD8D9E4))),
-                    child: CircleAvatar(
-                      radius: 22.0,
-                      backgroundColor: Theme.of(context).backgroundColor,
-                      child: ClipRRect(
-                        child: SvgPicture.asset(
-                          send,
-                          color: Theme.of(context).iconTheme.color,
+          for (ModelServices cover in model)
+            GestureDetector(
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) =>
+                          ViewPlans(id: cover.id!, subId: cover.subId!))),
+              child: Container(
+                margin: const EdgeInsets.only(right: 10),
+                padding: const EdgeInsets.all(16),
+                width: 80,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Theme.of(context).cardColor,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          border: Border.all(color: const Color(0xffD8D9E4))),
+                      child: CircleAvatar(
+                        radius: 22.0,
+                        backgroundColor: Theme.of(context).colorScheme.background,
+                        child: ClipRRect(
+                          child: SvgPicture.asset(
+                            send,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
+                          borderRadius: BorderRadius.circular(50.0),
                         ),
-                        borderRadius: BorderRadius.circular(50.0),
                       ),
                     ),
-                  ),
-                  Text(
-                    'Akiba',
-                    style: Theme.of(context).textTheme.bodyText1,
-                  )
-                ],
+                    Text(
+                      'Akiba',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(right: 10),
-            padding: const EdgeInsets.all(16),
-            width: 80,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Theme.of(context).cardColor,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: const Color(0xffD8D9E4))),
-                  child: CircleAvatar(
-                    radius: 22.0,
-                    backgroundColor: Theme.of(context).backgroundColor,
-                    child: ClipRRect(
-                      child: SvgPicture.asset(
-                        cashback,
-                        color: Theme.of(context).iconTheme.color,
-                      ),
-                      borderRadius: BorderRadius.circular(50.0),
-                    ),
-                  ),
-                ),
-                Text(
-                  'Britam Biashara',
-                  style: Theme.of(context).textTheme.bodyText1,
-                  overflow: TextOverflow.ellipsis,
-                )
-              ],
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(right: 10),
-            padding: const EdgeInsets.all(16),
-            width: 80,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Theme.of(context).cardColor,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: const Color(0xffD8D9E4))),
-                  child: CircleAvatar(
-                    radius: 22.0,
-                    backgroundColor: Theme.of(context).backgroundColor,
-                    child: ClipRRect(
-                      child: SvgPicture.asset(
-                        electricity,
-                        color: Theme.of(context).iconTheme.color,
-                      ),
-                      borderRadius: BorderRadius.circular(50.0),
-                    ),
-                  ),
-                ),
-                Text(
-                  'Fire & Burglary',
-                  style: Theme.of(context).textTheme.bodyText1,
-                  overflow: TextOverflow.ellipsis,
-                )
-              ],
-            ),
-          )
         ],
       ),
     );

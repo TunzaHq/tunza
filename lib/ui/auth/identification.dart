@@ -24,7 +24,7 @@ class _IdentificationState extends State<Identification> {
   @override
   Widget build(BuildContext context) {
     return Material(
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).colorScheme.background,
         child: SingleChildScrollView(
           child: SizedBox(
             height: MediaQuery.of(context).size.height,
@@ -72,7 +72,7 @@ class _IdentificationState extends State<Identification> {
                   padding: const EdgeInsets.only(left: 20),
                   child: Text(
                     'Front Side',
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
               ),
@@ -116,7 +116,7 @@ class _IdentificationState extends State<Identification> {
                   padding: const EdgeInsets.only(left: 20),
                   child: Text(
                     'Back Side',
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
               ),
@@ -197,7 +197,7 @@ class _IdentificationState extends State<Identification> {
                           },
                           child: Text(
                             'Next',
-                            style: Theme.of(context).textTheme.button,
+                            style: Theme.of(context).textTheme.labelLarge,
                           ),
                         ),
                 ),

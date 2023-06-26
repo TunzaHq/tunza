@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tunza/ui/auth/sign_in.dart';
@@ -59,7 +58,7 @@ class _DrawerPageState extends State<DrawerPage>
                       decoration: BoxDecoration(
                           borderRadius: const BorderRadius.only(
                               bottomRight: Radius.circular(60)),
-                          color: Theme.of(context).backgroundColor),
+                          color: Theme.of(context).colorScheme.background),
                       child: Center(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -73,7 +72,7 @@ class _DrawerPageState extends State<DrawerPage>
                               child: CircleAvatar(
                                 radius: 22.0,
                                 backgroundColor:
-                                    Theme.of(context).backgroundColor,
+                                    Theme.of(context).colorScheme.background,
                                 child: ClipRRect(
                                   child: Image.network(
                                     "${userDetail['avatar']}",
@@ -96,11 +95,11 @@ class _DrawerPageState extends State<DrawerPage>
                               children: [
                                 Text(
                                   "${userDetail['full_name']}",
-                                  style: Theme.of(context).textTheme.headline6,
+                                  style: Theme.of(context).textTheme.titleLarge,
                                 ),
                                 Text(
                                   "${userDetail['email']}",
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 )
                               ],
                             )
@@ -184,7 +183,7 @@ class _DrawerPageState extends State<DrawerPage>
                         ),
                         Text(
                           "Logout",
-                          style: Theme.of(context).textTheme.headline6,
+                          style: Theme.of(context).textTheme.titleLarge,
                         )
                       ],
                     ),
@@ -195,7 +194,7 @@ class _DrawerPageState extends State<DrawerPage>
                   padding: const EdgeInsets.all(20),
                   child: Text(
                     "Ver 0.1.1",
-                    style: Theme.of(context).textTheme.bodyText1,
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 )
               ],
@@ -280,7 +279,7 @@ class _DrawerPageState extends State<DrawerPage>
         ),
         Text(
           name,
-          style: Theme.of(context).textTheme.headline6!.copyWith(
+          style: Theme.of(context).textTheme.titleLarge!.copyWith(
                 fontSize: 16,
                 fontWeight: (isSelected) ? FontWeight.w700 : FontWeight.w400,
               ),

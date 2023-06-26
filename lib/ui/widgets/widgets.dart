@@ -18,7 +18,7 @@ Widget contentHeader(BuildContext context, Widget child) {
           ),
           Text(
             'Tunza',
-            style: Theme.of(context).textTheme.headline3,
+            style: Theme.of(context).textTheme.displaySmall,
           )
         ],
       ),
@@ -56,7 +56,7 @@ Widget claimCard(
               width: 50,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: Color(0xFFE5E5E5),
+                color: const Color(0xFFE5E5E5),
               ),
               child: const Icon(
                 Icons.money_outlined,
@@ -71,18 +71,18 @@ Widget claimCard(
               children: <Widget>[
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.bodyText2,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(
                   height: 4,
                 ),
                 Text(
                   'Claimed on $date',
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ],
             ),
-            Spacer(),
+            const Spacer(),
             Text(
               'Ksh $amount',
               style: Theme.of(context).textTheme.bodySmall,
@@ -106,12 +106,12 @@ Future<void> exitMessenger(BuildContext context, String message) async {
       builder: (_) => AlertDialog(
             title: Text(
               message,
-              style: Theme.of(context).textTheme.bodyText2,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             icon: SvgPicture.asset(logo),
             actions: [
               TextButton(
-                  style: TextButton.styleFrom(primary: Colors.red),
+                  style: TextButton.styleFrom(foregroundColor: Colors.red),
                   onPressed: () => Navigator.pop(context, true),
                   child: const Text("Yes")),
               TextButton(
