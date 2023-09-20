@@ -1,16 +1,24 @@
-# app
+# Tunza
 
-A new Flutter project.
+Tunza is a mobile application that leverages technology to increase Insurance penetration in Kenya. 
+It allows users to register, handle `Know-your-customer` (KYC), apply for insurance covers and make claims right inside the app. 
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
+- [Flutter](https://flutter.dev)
 
-A few resources to get you started if this is your first Flutter project:
+### Installation
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Clone
+```
+git clone https://github.com/bryanbill/tunza-mobile tunza
+```
+Get packages
+```
+cd tunza && flutter pub get
+```
+Run
+```
+flutter run
+```
