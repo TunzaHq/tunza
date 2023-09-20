@@ -137,7 +137,9 @@ class _HomePageState extends State<HomePage> with Glob {
                               child: Align(
                                   alignment: Alignment.center,
                                   child: Card(
-                                    color: Theme.of(context).colorScheme.background,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
                                     child: Container(
                                         margin:
                                             const EdgeInsets.only(bottom: 20),
@@ -272,14 +274,14 @@ class _HomePageState extends State<HomePage> with Glob {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'kes. 20,600',
+                'kes. 0.0',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(
                 height: 12,
               ),
               Text(
-                'Premium Balance',
+                'Premium Paid',
                 style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                       fontSize: 15,
                       fontWeight: FontWeight.w400,
@@ -287,16 +289,19 @@ class _HomePageState extends State<HomePage> with Glob {
               )
             ],
           ),
-          Container(
-            height: 55,
-            width: 55,
-            decoration: BoxDecoration(
-              color: const Color(0xffFFAC30),
-              borderRadius: BorderRadius.circular(80),
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.add,
+          Visibility(
+            visible: false,
+            child: Container(
+              height: 55,
+              width: 55,
+              decoration: BoxDecoration(
+                color: const Color(0xffFFAC30),
+                borderRadius: BorderRadius.circular(80),
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.add,
+                ),
               ),
             ),
           ),
@@ -365,7 +370,8 @@ class _HomePageState extends State<HomePage> with Glob {
                           border: Border.all(color: const Color(0xffD8D9E4))),
                       child: CircleAvatar(
                         radius: 22.0,
-                        backgroundColor: Theme.of(context).colorScheme.background,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.background,
                         child: ClipRRect(
                           child: SvgPicture.asset(
                             send,

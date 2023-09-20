@@ -1,10 +1,9 @@
-
 import 'package:cloudinary/cloudinary.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tunza/data/requests.dart';
 
 mixin Glob {
-  final String baseUrl = 'https://tunza.mybackend.studio';
+  final String baseUrl = 'https://ddd5-105-163-158-78.ngrok-free.app';
 
   //Auth
   final String signIn = '/auth/login';
@@ -41,7 +40,7 @@ mixin Glob {
 }
 
 class Resources {
-  // SIngleton
+  
   static final Resources _resources = Resources._internal();
 
   factory Resources() {

@@ -47,10 +47,8 @@ Widget contentServices(BuildContext context, List<Map<String, dynamic>> data) {
                         borderRadius: BorderRadius.circular(8),
                         color: Theme.of(context).cardColor,
                       ),
-                      child: SvgPicture.network(
-                        value.img,
-                        color: Theme.of(context).iconTheme.color,
-                      ),
+                      alignment: Alignment.center,
+                      child: Text(value.title[0]),
                     ),
                     const SizedBox(
                       height: 8,

@@ -154,42 +154,45 @@ class _HelpState extends State<Help> {
             const SizedBox(
               height: 20,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: ExpansionPanelList(
-                expandedHeaderPadding: EdgeInsets.zero,
-                dividerColor: Theme.of(context).colorScheme.background,
-                elevation: 0,
-                expandIconColor: const Color(0xFFFFAC30),
-                expansionCallback: (int index, bool isExpanded) {
-                  setState(() {
-                    _data[index].isExpanded = !isExpanded;
-                  });
-                },
-                children: _data.map<ExpansionPanel>((Item item) {
-                  return ExpansionPanel(
-                    backgroundColor: Theme.of(context).colorScheme.background,
-                    headerBuilder: (BuildContext context, bool isExpanded) {
-                      return ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(item.headerValue,
-                            style: Theme.of(context).textTheme.bodyMedium),
-                      );
-                    },
-                    body: ListTile(
-                        title: Text(item.expandedValue),
-                        subtitle: const Text(
-                            'To delete this panel, tap the trash can icon'),
-                        trailing: const Icon(Icons.delete),
-                        onTap: () {
-                          setState(() {
-                            _data.removeWhere(
-                                (Item currentItem) => item == currentItem);
-                          });
-                        }),
-                    isExpanded: item.isExpanded,
-                  );
-                }).toList(),
+            Visibility(
+              visible: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: ExpansionPanelList(
+                  expandedHeaderPadding: EdgeInsets.zero,
+                  dividerColor: Theme.of(context).colorScheme.background,
+                  elevation: 0,
+                  expandIconColor: const Color(0xFFFFAC30),
+                  expansionCallback: (int index, bool isExpanded) {
+                    setState(() {
+                      _data[index].isExpanded = !isExpanded;
+                    });
+                  },
+                  children: _data.map<ExpansionPanel>((Item item) {
+                    return ExpansionPanel(
+                      backgroundColor: Theme.of(context).colorScheme.background,
+                      headerBuilder: (BuildContext context, bool isExpanded) {
+                        return ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(item.headerValue,
+                              style: Theme.of(context).textTheme.bodyMedium),
+                        );
+                      },
+                      body: ListTile(
+                          title: Text(item.expandedValue),
+                          subtitle: const Text(
+                              'To delete this panel, tap the trash can icon'),
+                          trailing: const Icon(Icons.delete),
+                          onTap: () {
+                            setState(() {
+                              _data.removeWhere(
+                                  (Item currentItem) => item == currentItem);
+                            });
+                          }),
+                      isExpanded: item.isExpanded,
+                    );
+                  }).toList(),
+                ),
               ),
             )
           ]),
