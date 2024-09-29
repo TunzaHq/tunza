@@ -1,5 +1,4 @@
 # Tunza
-**WIP**
 Tunza is a mobile application that leverages technology to increase Kenya's insurance penetration. 
 It allows users to register, handle `Know-your-customer` (KYC), apply for insurance covers and make claims right inside the app. 
 
